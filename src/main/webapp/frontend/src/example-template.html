@@ -1,0 +1,57 @@
+<script type="module">
+    import { LitElement, html } from 'https://unpkg.com/@polymer/lit-element@0.5.1/lit-element.js?module';
+
+    class ExampleTemplate extends LitElement {
+        static get is() {
+            return 'example-template'
+        }
+
+        static get properties() {
+            return {
+                whales: Number
+            }
+        }
+
+
+        constructor() {
+            super();
+            this.whales=5;
+            this.addEventListener('click', async (e) => {
+                this.whales++;
+                await this.renderComplete;
+                this.dispatchEvent(new CustomEvent('whales', { detail: { whales: this.whales } }))
+            });
+        }
+
+        // Render method should return a `TemplateResult` using the provided lit-html `html` tag function
+        _render({ foo, whales }) {
+            return html`
+                <style>
+                    :host {
+                    display: block;
+                    }
+                    .even {
+                        background: yellow;
+                    }
+                    .odd {
+                        background: red;
+                    }
+                </style>
+                <div>Whales: ${whales}</div>
+                <div class$="${whales %2 == 0? 'even' : 'odd'}">whales: ${'🐳'.repeat(whales)}</div>
+                <slot></slot>
+                `;
+        }
+
+        // This is only for Flow
+        set(prop, value) {
+            this[prop] = value;
+        }
+
+    }
+    customElements.define(ExampleTemplate.is, ExampleTemplate);
+</script>
+
+
+<!-- This is only for Flow-->
+<dom-module id="example-template"></dom-module>
