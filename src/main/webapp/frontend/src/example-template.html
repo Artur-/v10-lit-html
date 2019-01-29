@@ -1,5 +1,5 @@
 <script type="module">
-    import { LitElement, html } from 'https://unpkg.com/@polymer/lit-element@0.5.1/lit-element.js?module';
+    import { LitElement, html, css } from 'https://unpkg.com/lit-element@2.0.0-rc.5/lit-element.js?module';
 
     class ExampleTemplate extends LitElement {
         static get is() {
@@ -15,18 +15,16 @@
 
         constructor() {
             super();
-            this.whales=5;
+            this.whales = 5;
             this.addEventListener('click', async (e) => {
                 this.whales++;
-                await this.renderComplete;
-                this.dispatchEvent(new CustomEvent('whales', { detail: { whales: this.whales } }))
+                await this.updateComplete;
+                this.$server.updateWhales(this.whales);
             });
         }
 
-        // Render method should return a `TemplateResult` using the provided lit-html `html` tag function
-        _render({ foo, whales }) {
-            return html`
-                <style>
+        static get styles() {
+            return css`
                     :host {
                     display: block;
                     }
@@ -36,9 +34,12 @@
                     .odd {
                         background: red;
                     }
-                </style>
-                <div>Whales: ${whales}</div>
-                <div class$="${whales %2 == 0? 'even' : 'odd'}">whales: ${'🐳'.repeat(whales)}</div>
+            ;`
+        }
+        render() {
+            return html`
+                <div>Whales: ${this.whales}</div>
+                <div class="${this.whales % 2 == 0 ? 'even' : 'odd'}">whales: ${'🐳'.repeat(this.whales)}</div>
                 <slot></slot>
                 `;
         }
